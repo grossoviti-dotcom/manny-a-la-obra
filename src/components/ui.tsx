@@ -49,7 +49,7 @@ export function Stars({ value, size = 16, label = true }: { value: number | null
           <IconStar key={i} size={size} filled={v >= i - 0.25} className={v >= i - 0.25 ? "" : "text-border"} />
         ))}
       </span>
-      {label && <span className="sr-only">{value ? `${value.toFixed(1)} de 5 estrellas` : "Sin calificaciones"}</span>}
+      {label && <span className="sr-only">{value ? `${value.toLocaleString("es-AR")} de 5 estrellas` : "Sin calificaciones"}</span>}
     </span>
   );
 }

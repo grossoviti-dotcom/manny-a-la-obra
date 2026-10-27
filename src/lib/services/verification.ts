@@ -25,7 +25,8 @@ export function requiredDocs(categories: string[]): DocType[] {
 }
 
 export async function updateProfile(actor: Actor, input: z.input<typeof profileSchema>) {
-  assertRole(actor, "profesional");
+  const current = await getOwnProfile(actor);
+  if (current.verificationStatus === "en_revision") throw new DomainError("Tu perfil está en revisión; vas a poder editarlo cuando terminemos.");
   const data = profileSchema.parse(input);
   await db
     .update(schema.professionalProfiles)

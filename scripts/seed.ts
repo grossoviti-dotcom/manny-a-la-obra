@@ -127,20 +127,25 @@ const JOB_TITLES: Record<string, string[]> = {
 };
 
 const COMMENTS_5 = [
-  "Llegó puntual, me explicó el problema y lo resolvió en el momento. Me sentí muy tranquila durante todo el trabajo. Lo volvería a llamar sin dudar.",
+  "Llegó puntual, me explicó el problema y lo resolvió en el momento. Lo volvería a llamar sin dudar.",
   "Excelente trabajo. El presupuesto fue exactamente lo que terminé pagando, sin sorpresas. Muy prolijo, dejó todo limpio.",
   "Súper recomendable. Vino el mismo día, fue muy respetuoso y me mostró las piezas que cambió. Da confianza.",
   "Muy profesional. Me mandó fotos del avance por el chat y terminó antes de lo previsto.",
   "Atento y claro con los precios. Comparé tres presupuestos y no era el más barato, pero valió la pena por la calidad.",
   "Resolvió algo que otro técnico no había podido arreglar. Muy buena predisposición y conocimiento.",
   "Trabajo impecable y muy buena onda. Me dio consejos para que no vuelva a pasar.",
-  "Vivo sola y me daba inseguridad que entre alguien a casa, pero fue todo muy correcto y profesional. Lo recomiendo.",
+  "Muy respetuoso dentro de casa, cuidadoso con los muebles y con el orden. Se nota la experiencia.",
+  "Me pasó el presupuesto en el día y vino cuando dijo. Cero vueltas, muy recomendable.",
+  "Excelente atención de principio a fin. Respondió todas mis dudas por el chat antes de venir.",
+  "Encontró la falla rápido y no me cobró de más. Ya lo agendé para la próxima.",
 ];
+const LUCIA_REVIEW = "Vivo sola y me daba inseguridad que entre alguien a casa, pero fue todo muy correcto y profesional. Lo recomiendo.";
 const COMMENTS_4 = [
   "Buen trabajo, quedó bien. Llegó un rato más tarde de lo acordado pero avisó por el chat.",
   "Cumplió con lo presupuestado. Tuvo que volver al otro día por un repuesto, pero lo resolvió.",
   "Muy correcto y prolijo. El precio un poco alto, pero el trabajo lo vale.",
   "Todo bien, rápido y claro. Le faltó un poco de limpieza al final.",
+  "Buen trabajo y buena predisposición. Tardó un poco en responder los mensajes.",
 ];
 const COMMENTS_3 = ["El trabajo quedó bien, pero tardó más días de los que había dicho y tuve que insistir para coordinar."];
 
@@ -354,11 +359,13 @@ async function main() {
   const verifiedPros = PROS.filter((p) => !p.status);
   for (const p of verifiedPros) {
     const pro = pros[p.email];
+    const pool5 = [...COMMENTS_5].sort(() => rand() - 0.5);
+    const pool4 = [...COMMENTS_4].sort(() => rand() - 0.5);
     for (let k = 0; k < (p.jobs ?? 4); k++) {
       const client = pick(clientList);
       const roll = rand();
       const rating = roll < 0.72 ? 5 : roll < 0.95 ? 4 : 3;
-      const comment = rating === 5 ? pick(COMMENTS_5) : rating === 4 ? pick(COMMENTS_4) : pick(COMMENTS_3);
+      const comment = rating === 5 ? pool5[k % pool5.length] : rating === 4 ? pool4[k % pool4.length] : pick(COMMENTS_3);
       const tags = rating >= 4 ? [...TAGS_GOOD].sort(() => rand() - 0.5).slice(0, 1 + Math.floor(rand() * 3)) : ["Explicó todo"];
       const cat = p.cats[k % p.cats.length];
       await createJob({
@@ -429,7 +436,7 @@ async function main() {
   await createJob({ clientId: lucia.id, proId: P("federico.luna"), category: "electrodomesticos", title: "Instalar aire acondicionado split", zone: "Centro", created: daysAgo(4), price: 85000, jobStatus: "contratado", extraQuotes: [P("daniela.sosa")] });
   await createJob({ clientId: lucia.id, proId: P("lautaro.gimenez"), category: "tecnologia", title: "Configurar wifi y repetidor", zone: "Centro", created: daysAgo(6), price: 30000, jobStatus: "en_curso" });
   await createJob({ clientId: lucia.id, proId: P("daniela.sosa"), category: "electrodomesticos", title: "Lavarropas que no centrifuga", zone: "Centro", created: daysAgo(12), price: 45000, jobStatus: "finalizado" });
-  await createJob({ clientId: lucia.id, proId: P("marcelo.ibanez"), category: "gas", title: "Revisión de calefactor antes del invierno", zone: "Centro", created: daysAgo(150), price: 42000, jobStatus: "calificado", review: { rating: 5, comment: COMMENTS_5[7], tags: ["Confiable", "Explicó todo", "Puntualidad"] } });
+  await createJob({ clientId: lucia.id, proId: P("marcelo.ibanez"), category: "gas", title: "Revisión de calefactor antes del invierno", zone: "Centro", created: daysAgo(150), price: 42000, jobStatus: "calificado", review: { rating: 5, comment: LUCIA_REVIEW, tags: ["Confiable", "Explicó todo", "Puntualidad"] } });
   const paint = await createJob({ clientId: lucia.id, proId: P("ezequiel.romero"), category: "reparaciones-hogar", title: "Pintar dormitorio", zone: "Centro", created: daysAgo(25), price: 120000, jobStatus: "en_reclamo" });
 
   console.log("→ Reclamos");
