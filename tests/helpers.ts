@@ -43,7 +43,7 @@ export async function makePro(opts: { verify?: Actor; category?: "electricidad" 
     licenseNumber: category === "electricidad" ? "MP-1" : "",
     phone: "",
   });
-  for (const t of ["dni_frente", "dni_dorso", "selfie", ...(category === "electricidad" ? ["matricula"] : [])] as const)
+  for (const t of ["dni_frente", "dni_dorso", "selfie", ...(category === "electricidad" ? ["matricula"] : [])] as ("dni_frente" | "dni_dorso" | "selfie" | "matricula")[])
     await uploadDocument(pro, t, pngFile());
   await submitForReview(pro);
   if (opts.verify) await adminApprove(opts.verify, pro.id);
